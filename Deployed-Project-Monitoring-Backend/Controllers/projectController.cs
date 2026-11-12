@@ -37,4 +37,22 @@ public class ProjectsController : ControllerBase
             project.user_id
         });
     }
+
+    [HttpGet("user/{userId:int}")]
+    public async Task<IActionResult> GetProjectsByUserId([FromRoute] int userId)
+    {
+        var projects = await _projectService.GetProjectsByUserId(userId);
+        return Ok(projects.Select(project => new
+        {
+            project.id,
+            project.project_name,
+            project.description,
+            project.deployment_url,
+            project.provider,
+            project.user_id,
+            project.created_at,
+            project.last_checked_at,
+            project.status
+        }));
+    }
 }

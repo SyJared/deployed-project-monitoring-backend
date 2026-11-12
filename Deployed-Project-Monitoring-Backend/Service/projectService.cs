@@ -1,5 +1,6 @@
 using Data;
 using DTOs;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using ProjectInterface;
 namespace Services;
@@ -29,5 +30,12 @@ public class ProjectService : IProjectService
 		_context.Projects.Add(project);
 		await _context.SaveChangesAsync();
 		return project;
+	}
+
+	public async Task<List<Projects>> GetProjectsByUserId(int userId)
+	{
+		return await _context.Projects
+			.Where(project => project.user_id == userId)
+			.ToListAsync();
 	}
 }
