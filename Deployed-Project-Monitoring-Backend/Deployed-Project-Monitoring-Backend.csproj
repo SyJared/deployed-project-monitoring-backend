@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Deployed_Project_Monitoring_Backend</RootNamespace>
+    <UserSecretsId>231648a7-77a1-45ef-96ef-f8f2683448f9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
