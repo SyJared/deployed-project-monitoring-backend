@@ -22,6 +22,40 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Models.DeploymentChecks", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("checked_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("error_message")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("http_status_code")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("project_id")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("response_time_ms")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("project_id");
+
+                    b.ToTable("DeploymentChecks");
+                });
+
             modelBuilder.Entity("Models.Projects", b =>
                 {
                     b.Property<int>("id")
@@ -99,6 +133,17 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Models.DeploymentChecks", b =>
+                {
+                    b.HasOne("Models.Projects", "Project")
+                        .WithMany("DeploymentChecks")
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Models.Projects", b =>
                 {
                     b.HasOne("Models.Users", "User")
@@ -108,6 +153,11 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Models.Projects", b =>
+                {
+                    b.Navigation("DeploymentChecks");
                 });
 
             modelBuilder.Entity("Models.Users", b =>

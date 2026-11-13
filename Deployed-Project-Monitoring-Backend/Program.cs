@@ -3,6 +3,7 @@ using Data;
 using ProjectInterface;
 using UserInterfaces;
 using Services;
+using DeploymentChecksInterface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddHttpClient<IDeploymentChecksService, DeploymentChecksService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

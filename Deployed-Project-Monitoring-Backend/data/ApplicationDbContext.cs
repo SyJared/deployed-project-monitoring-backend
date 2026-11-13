@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext
 
 	public DbSet<Users> Users { get; set; }
     public DbSet<Projects> Projects { get; set; }
+	public DbSet<DeploymentChecks> DeploymentChecks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,7 +24,12 @@ public class ApplicationDbContext : DbContext
 			.HasForeignKey(p => p.user_id)
 			.OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Projects>()
-    .Property(p => p.status)
-    .HasConversion<string>();
+		.Property(p => p.status)
+		.HasConversion<string>();
+        modelBuilder.Entity<DeploymentChecks>()
+		.HasOne(d => d.Project)
+		.WithMany(p => p.DeploymentChecks)
+		.HasForeignKey(d => d.project_id)
+		.OnDelete(DeleteBehavior.Cascade);
     }
 }

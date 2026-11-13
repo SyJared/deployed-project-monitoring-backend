@@ -8,10 +8,11 @@ public class Projects
     public string provider { get; set; } = string.Empty;
     public string deployment_url { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
-    public DateTime created_at { get; set; }
+    public DateTime created_at { get; set; } = DateTime.UtcNow;
     public DateTime last_checked_at { get; set; }
     public DeploymentStatus status { get; set; } = DeploymentStatus.Unknown;
 
     public Users? User { get; set; }
-
+    public ICollection<DeploymentChecks> DeploymentChecks { get; set; }
+    = new List<DeploymentChecks>();
 }
