@@ -99,6 +99,25 @@ public class DeploymentChecksService : IDeploymentChecksService
         return results;
     }
 
+    public async Task<List<DeploymentChecks>> CheckAllProjects()
+    {
+        var projects = await _context.Projects
+            .Select(p => p.id)
+            .ToListAsync();
+
+        var results = new List<DeploymentChecks>();
+
+        foreach (var projectId in projects)
+        {
+            var result = await CheckProject(projectId);
+
+            if (result != null)
+                results.Add(result);
+        }
+
+        return results;
+    }
+
     public async Task<UptimeResponse> GetUptime(int projectId, int days)
     {
         var startDate = DateTime.UtcNow.AddDays(-days);

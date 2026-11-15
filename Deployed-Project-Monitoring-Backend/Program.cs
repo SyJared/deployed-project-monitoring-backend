@@ -1,9 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+using BackgroundServices;
 using Data;
-using ProjectInterface;
-using UserInterfaces;
-using Services;
 using DeploymentChecksInterface;
+using Microsoft.EntityFrameworkCore;
+using ProjectInterface;
+using Services;
+using UserInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddHttpClient<IDeploymentChecksService, DeploymentChecksService>();
+builder.Services.AddHostedService<DeploymentMonitoringWorker>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
