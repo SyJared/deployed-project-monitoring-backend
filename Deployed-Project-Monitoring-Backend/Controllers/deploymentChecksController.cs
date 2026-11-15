@@ -58,4 +58,16 @@ public class MonitoringController : ControllerBase
             error_message = r.error_message
         }));
     }
+    [HttpGet("uptime/{projectId:int}")]
+    public async Task<IActionResult> GetUptime(
+    int projectId,
+    [FromQuery] int days = 30)
+    {
+        if (days <= 0)
+            return BadRequest("Days must be greater than zero.");
+
+        var result = await _deploymentChecksService.GetUptime(projectId, days);
+
+        return Ok(result);
+    }
 }

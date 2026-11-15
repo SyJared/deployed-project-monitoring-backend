@@ -1,5 +1,6 @@
 using Data;
 using DeploymentChecksInterface;
+using DTOs;
 using Enums;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -96,5 +97,40 @@ public class DeploymentChecksService : IDeploymentChecksService
         }
 
         return results;
+    }
+
+    public async Task<UptimeResponse> GetUptime(int projectId, int days)
+    {
+        var startDate = DateTime.UtcNow.AddDays(-days);
+
+        var checks = await _context.DeploymentChecks
+            .Where(c =>
+                c.project_id == projectId &&
+                c.checked_at >= startDate)
+            .ToListAsync();
+
+        var totalChecks = checks.Count;
+
+        var successfulChecks = checks.Count(c => c.status == "Online");
+
+        // Count distinct calendar dates that have health checks
+        var daysChecked = checks
+            .Select(c => c.checked_at.Date)
+            .Distinct()
+            .Count();
+
+        var uptime = totalChecks == 0
+            ? 0
+            : (double)successfulChecks / totalChecks * 100;
+
+        return new UptimeResponse
+        {
+            project_id = projectId,
+            requested_days = days,
+            days_checked = daysChecked,
+            total_checks = totalChecks,
+            successful_checks = successfulChecks,
+            uptime_percentage = Math.Round(uptime, 2)
+        };
     }
 }
