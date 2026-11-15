@@ -77,4 +77,24 @@ public class DeploymentChecksService : IDeploymentChecksService
 
         return check;
     }
+    public async Task<List<DeploymentChecks>?> CheckAllProjects(int userId)
+    {
+        var projects = await _context.Projects
+            .Where(p => p.user_id == userId)
+            .ToListAsync();
+
+        var results = new List<DeploymentChecks>();
+
+        foreach (var project in projects)
+        {
+            var result = await CheckProject(project.id);
+
+            if (result != null)
+            {
+                results.Add(result);
+            }
+        }
+
+        return results;
+    }
 }

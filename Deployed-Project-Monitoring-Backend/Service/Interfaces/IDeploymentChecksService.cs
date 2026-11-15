@@ -3,4 +3,5 @@ namespace DeploymentChecksInterface;
 public interface IDeploymentChecksService
 {
     Task<DeploymentChecks?> CheckProject(int projectId);
+    Task<List<DeploymentChecks>?> CheckAllProjects(int userId);
 }
