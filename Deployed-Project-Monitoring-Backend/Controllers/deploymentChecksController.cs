@@ -70,4 +70,38 @@ public class MonitoringController : ControllerBase
 
         return Ok(result);
     }
+    [HttpGet("downtime/{projectId:int}")]
+    public async Task<IActionResult> GetDowntimeHistory(int projectId)
+    {
+        var results = await _deploymentChecksService.GetProjectDowntimeHistory(projectId);
+
+        return Ok(results.Select(d => new
+        {
+            d.id,
+            d.project_id,
+            d.started_at,
+            d.resolved_at,
+            status = d.status.ToString()
+        }));
+    }
+    [HttpGet("downtime/{projectId:int}/ongoing")]
+    public async Task<IActionResult> GetOngoingDowntime(int projectId)
+    {
+        var result = await _deploymentChecksService.GetOngoingDowntime(projectId);
+
+        if (result == null)
+            return NotFound(new
+            {
+                message = "No ongoing downtime found."
+            });
+
+        return Ok(new
+        {
+            result.id,
+            result.project_id,
+            result.started_at,
+            result.resolved_at,
+            status = result.status.ToString()
+        });
+    }
 }

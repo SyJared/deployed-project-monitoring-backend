@@ -20,7 +20,12 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddHttpClient<IDeploymentChecksService, DeploymentChecksService>();
+builder.Services.AddHttpClient<
+    IDeploymentChecksService,
+    DeploymentChecksService>(client =>
+    {
+        client.Timeout = TimeSpan.FromSeconds(15);
+    });
 builder.Services.AddHostedService<DeploymentMonitoringWorker>();
 var app = builder.Build();
 

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using System.Diagnostics;
 
+
 namespace Services;
 
 public class DeploymentChecksService : IDeploymentChecksService
@@ -71,6 +72,47 @@ public class DeploymentChecksService : IDeploymentChecksService
             ? DeploymentStatus.Online
             : DeploymentStatus.Offline;
 
+        // Get the previous health check BEFORE saving the current one.
+        var previousCheck = await _context.DeploymentChecks
+            .Where(c => c.project_id == projectId)
+            .OrderByDescending(c => c.checked_at)
+            .FirstOrDefaultAsync();
+
+        // Find an existing ongoing downtime event.
+        var ongoingDowntime = await _context.DowntimeEvents
+            .FirstOrDefaultAsync(d =>
+                d.project_id == projectId &&
+                d.status == DowntimeStatus.Ongoing);
+
+        // If the current check failed...
+        if (check.status == "Offline")
+        {
+            // Only create an event if the previous check also failed.
+            if (ongoingDowntime == null &&
+                previousCheck?.status == "Offline")
+            {
+                var downtime = new DowntimeEvents
+                {
+                    project_id = projectId,
+
+                    // Use the first failed check as the downtime start.
+                    started_at = previousCheck.checked_at,
+
+                    status = DowntimeStatus.Ongoing
+                };
+
+                _context.DowntimeEvents.Add(downtime);
+            }
+        }
+        // If the project is online again...
+        else if (check.status == "Online")
+        {
+            if (ongoingDowntime != null)
+            {
+                ongoingDowntime.resolved_at = check.checked_at;
+                ongoingDowntime.status = DowntimeStatus.Resolved;
+            }
+        }
         // Save the monitoring history
         _context.DeploymentChecks.Add(check);
 
@@ -151,5 +193,20 @@ public class DeploymentChecksService : IDeploymentChecksService
             successful_checks = successfulChecks,
             uptime_percentage = Math.Round(uptime, 2)
         };
+    }
+    public async Task<List<DowntimeEvents>> GetProjectDowntimeHistory(
+    int projectId)
+    {
+        return await _context.DowntimeEvents
+            .Where(d => d.project_id == projectId)
+            .OrderByDescending(d => d.started_at)
+            .ToListAsync();
+    }
+    public async Task<DowntimeEvents?> GetOngoingDowntime(int projectId)
+    {
+        return await _context.DowntimeEvents
+            .FirstOrDefaultAsync(d =>
+                d.project_id == projectId &&
+                d.status == DowntimeStatus.Ongoing);
     }
 }

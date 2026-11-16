@@ -56,6 +56,34 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                     b.ToTable("DeploymentChecks");
                 });
 
+            modelBuilder.Entity("Models.DowntimeEvents", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+
+                    b.Property<int>("project_id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("resolved_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("started_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("project_id");
+
+                    b.ToTable("DowntimeEvents");
+                });
+
             modelBuilder.Entity("Models.Projects", b =>
                 {
                     b.Property<int>("id")
@@ -137,6 +165,17 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                 {
                     b.HasOne("Models.Projects", "Project")
                         .WithMany("DeploymentChecks")
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Models.DowntimeEvents", b =>
+                {
+                    b.HasOne("Models.Projects", "Project")
+                        .WithMany()
                         .HasForeignKey("project_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

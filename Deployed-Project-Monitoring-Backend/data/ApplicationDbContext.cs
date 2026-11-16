@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext
 	public DbSet<Users> Users { get; set; }
     public DbSet<Projects> Projects { get; set; }
 	public DbSet<DeploymentChecks> DeploymentChecks { get; set; }
+    public DbSet<DowntimeEvents> DowntimeEvents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,14 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Projects>()
 		.Property(p => p.status)
 		.HasConversion<string>();
+        modelBuilder.Entity<DowntimeEvents>()
+		.Property(d => d.status)
+		.HasConversion<string>();
+        modelBuilder.Entity<DowntimeEvents>()	
+		.HasOne(d => d.Project)
+		.WithMany()
+		.HasForeignKey(d => d.project_id)
+		.OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<DeploymentChecks>()
 		.HasOne(d => d.Project)
 		.WithMany(p => p.DeploymentChecks)
