@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Projects> Projects { get; set; }
 	public DbSet<DeploymentChecks> DeploymentChecks { get; set; }
     public DbSet<DowntimeEvents> DowntimeEvents { get; set; }
+    public DbSet<DeploymentReports> DeploymentReports { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +39,11 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<DeploymentChecks>()
 		.HasOne(d => d.Project)
 		.WithMany(p => p.DeploymentChecks)
+		.HasForeignKey(d => d.project_id)
+		.OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<DeploymentReports>()
+		.HasOne(d => d.Project)
+		.WithMany()
 		.HasForeignKey(d => d.project_id)
 		.OnDelete(DeleteBehavior.Cascade);
     }

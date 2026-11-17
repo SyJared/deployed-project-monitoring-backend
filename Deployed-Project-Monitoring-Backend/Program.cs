@@ -3,6 +3,8 @@ using Data;
 using DeploymentChecksInterface;
 using Microsoft.EntityFrameworkCore;
 using ProjectInterface;
+using SDKInterface;
+using SDKServices;
 using Services;
 using UserInterfaces;
 
@@ -27,6 +29,10 @@ builder.Services.AddHttpClient<
         client.Timeout = TimeSpan.FromSeconds(15);
     });
 builder.Services.AddHostedService<DeploymentMonitoringWorker>();
+
+builder.Services.AddScoped<
+    IDeploymentReportService,
+    DeploymentReportService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

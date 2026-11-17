@@ -56,6 +56,44 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                     b.ToTable("DeploymentChecks");
                 });
 
+            modelBuilder.Entity("Models.DeploymentReports", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+
+                    b.Property<string>("commit_hash")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("deployed_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("deployment_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("environment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("project_id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("received_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("version")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("project_id");
+
+                    b.ToTable("DeploymentReports");
+                });
+
             modelBuilder.Entity("Models.DowntimeEvents", b =>
                 {
                     b.Property<int>("id")
@@ -165,6 +203,17 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                 {
                     b.HasOne("Models.Projects", "Project")
                         .WithMany("DeploymentChecks")
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Models.DeploymentReports", b =>
+                {
+                    b.HasOne("Models.Projects", "Project")
+                        .WithMany()
                         .HasForeignKey("project_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
