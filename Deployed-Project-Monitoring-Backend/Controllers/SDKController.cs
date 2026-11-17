@@ -17,17 +17,22 @@ public class SDKController : ControllerBase
         _deploymentService = deploymentService;
     }
 
+
     [HttpPost("deployments")]
     public async Task<IActionResult> ReportDeployment(
+        [FromHeader(Name = "X-API-Key")] string apiKey,
         [FromBody] DeploymentReportRequest request)
     {
-        var result = await _deploymentService.ReportDeployment(request);
+        var result = await _deploymentService.ReportDeployment(
+            apiKey,
+            request
+        );
 
         if (result == null)
         {
-            return NotFound(new
+            return Unauthorized(new
             {
-                message = "Project not found."
+                message = "Invalid or missing API key."
             });
         }
 
@@ -47,6 +52,7 @@ public class SDKController : ControllerBase
             }
         });
     }
+
     [HttpGet("deployments/{projectId:int}")]
     public async Task<IActionResult> GetDeploymentHistory(int projectId)
     {

@@ -130,6 +130,10 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
+                    b.Property<string>("api_key_hash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<DateTime>("created_at")
                         .HasColumnType("timestamp with time zone");
 
@@ -160,6 +164,9 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("id");
+
+                    b.HasIndex("api_key_hash")
+                        .IsUnique();
 
                     b.HasIndex("user_id");
 

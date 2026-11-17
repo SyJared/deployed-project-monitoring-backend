@@ -7,7 +7,7 @@ namespace SDKInterface;
 public interface IDeploymentReportService
 {
     Task<DeploymentReports?> ReportDeployment(
-        DeploymentReportRequest request
-    );
+    string apiKey,
+    DeploymentReportRequest request);
     Task<List<DeploymentReports>> GetDeploymentHistory(int projectId);
 }

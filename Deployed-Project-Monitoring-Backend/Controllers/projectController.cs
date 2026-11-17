@@ -15,28 +15,39 @@ public class ProjectsController : ControllerBase
     {
         _projectService = projectService;
     }
+
     [HttpPost("insert")]
-    public async Task<IActionResult> InsertProject([FromBody] ProjectsInfo projectInfo)
+    public async Task<IActionResult> InsertProject(
+        [FromBody] ProjectsInfo projectInfo)
     {
-        var project = await _projectService.InsertProject(projectInfo);
-        if (project == null)
+        var result = await _projectService.InsertProject(projectInfo);
+
+        if (result == null)
         {
             return BadRequest(new
             {
                 message = "Failed to insert project."
             });
         }
+
+        var project = result.Project;
+
         return StatusCode(201, new
         {
             message = "Project inserted successfully.",
-            project.id,
-            project.project_name,
-            project.description,
-            project.deployment_url,
-            project.provider,
-            project.user_id
+            project = new
+            {
+                project.id,
+                project.project_name,
+                project.description,
+                project.deployment_url,
+                project.provider,
+                project.user_id
+            },  
+            api_key = result.ApiKey
         });
     }
+
 
     [HttpGet("user/{userId:int}")]
     public async Task<IActionResult> GetProjectsByUserId([FromRoute] int userId)

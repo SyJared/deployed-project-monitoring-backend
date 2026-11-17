@@ -46,5 +46,13 @@ public class ApplicationDbContext : DbContext
 		.WithMany()
 		.HasForeignKey(d => d.project_id)
 		.OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Projects>()
+		.Property(p => p.api_key_hash)
+		.HasMaxLength(64);
+
+        modelBuilder.Entity<Projects>()
+        .HasIndex(p => p.api_key_hash)
+        .IsUnique();
     }
 }

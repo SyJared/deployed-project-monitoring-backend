@@ -6,9 +6,6 @@ namespace DTOs;
 public class DeploymentReportRequest
 {
     [Required]
-    public int project_id { get; set; }
-
-    [Required]
     [MaxLength(50)]
     public string version { get; set; } = string.Empty;
 

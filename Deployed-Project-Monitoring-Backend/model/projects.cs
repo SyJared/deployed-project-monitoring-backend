@@ -15,4 +15,6 @@ public class Projects
     public Users? User { get; set; }
     public ICollection<DeploymentChecks> DeploymentChecks { get; set; }
     = new List<DeploymentChecks>();
+
+    public string? api_key_hash { get; set; }
 }
