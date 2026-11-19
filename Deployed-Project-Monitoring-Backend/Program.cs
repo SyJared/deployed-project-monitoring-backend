@@ -30,9 +30,12 @@ builder.Services.AddHttpClient<
     });
 builder.Services.AddHostedService<DeploymentMonitoringWorker>();
 
+
 builder.Services.AddScoped<
     IDeploymentReportService,
     DeploymentReportService>();
+
+builder.Services.AddScoped<IHeartbeatService, HeartbeatService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

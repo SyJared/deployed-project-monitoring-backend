@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
 	public DbSet<DeploymentChecks> DeploymentChecks { get; set; }
     public DbSet<DowntimeEvents> DowntimeEvents { get; set; }
     public DbSet<DeploymentReports> DeploymentReports { get; set; }
+    public DbSet<Heartbeats> Heartbeats { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,5 +55,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Projects>()
         .HasIndex(p => p.api_key_hash)
         .IsUnique();
+
+        modelBuilder.Entity<Heartbeats>(e =>
+        {
+            e.Property(h => h.instance_id).HasMaxLength(64);
+            e.HasIndex(h => new { h.project_id, h.instance_id }).IsUnique();
+        });
     }
+
 }

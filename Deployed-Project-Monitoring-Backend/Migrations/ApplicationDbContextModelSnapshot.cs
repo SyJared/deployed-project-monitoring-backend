@@ -122,6 +122,60 @@ namespace Deployed_Project_Monitoring_Backend.Migrations
                     b.ToTable("DowntimeEvents");
                 });
 
+            modelBuilder.Entity("Models.Heartbeats", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+
+                    b.Property<double?>("cpu_percent")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("environment")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("first_seen_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("instance_id")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<int>("interval_seconds")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("last_heartbeat_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double?>("memory_mb")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("node_version")
+                        .HasColumnType("text");
+
+                    b.Property<int>("project_id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("started_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("uptime_seconds")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("version")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("project_id", "instance_id")
+                        .IsUnique();
+
+                    b.ToTable("Heartbeats");
+                });
+
             modelBuilder.Entity("Models.Projects", b =>
                 {
                     b.Property<int>("id")
